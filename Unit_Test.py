@@ -1,7 +1,6 @@
 import ChessPython
 import unittest 
 
-
 new_board = ChessPython.Board()
 
 class Test_CreateBoard(unittest.TestCase):
@@ -17,17 +16,25 @@ class Test_AddChessPiece(unittest.TestCase):
         # assert the chess piece is == blackking object
         self.assertIsInstance(new_board.board[7][0].chess_piece, ChessPython.BlackKing)
 
-        
+blackKing = ChessPython.BlackKing()
+new_board.addChessPiece(blackKing, "a8")
+new_game = ChessPython.Game(new_board)
+
+class Test_ShowAvailableMovesPiece(unittest.TestCase):
+    def test_ShowAvailableMovesPiece(self):
+        self.assertListEqual(sorted(new_game.ShowAvailableMoves(blackKing)), sorted(['b8', 'a7', 'b7']))
+
+
+
 # print the board
 for row in new_board.board:
     for position in row:
         print(position.tostring(), end=" ")
     print(",")
 
-blackKing = ChessPython.BlackKing()
-new_board.addChessPiece(blackKing, "a8")
-
 new_board.printBoard()
 
-new_game = ChessPython.Game(new_board)
 print(new_game.list_Chess_Pieces)
+
+new_game.MoveChessPiece("kb8")
+new_game.board.printBoard()

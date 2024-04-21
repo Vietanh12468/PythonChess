@@ -23,16 +23,22 @@ class IKing(IchessPiece):
     def move(self, position):
         Position.OnMove(self, position)
 
+    def get_available_moves(self):
+
+
+
+        pass
+
 
 class BlackKing(IKing):
     def __init__(self):
         super().__init__()
-        self.symbol = "♚"
+        self.symbol = "♔"
 
 class WhiteKing(IKing):
     def __init__(self):
         super().__init__()
-        self.symbol = "♔"
+        self.symbol = "♚"
     
 
 class Position:
@@ -40,7 +46,7 @@ class Position:
         self.column = column
         self.row = row
         self.chess_piece = chess_piece
-        self.indexColumn = ord(column.lower())-1-97
+        self.indexColumn = ord(column.lower())-97
         self.indexRow = row-1
 
     def SetChessPiece(self, chess_piece):
@@ -65,7 +71,7 @@ class Board:
         self.columns = columns
         self.board = [[Position(col, row, None) for col in columns] for row in rows]
 
-    def find_position(self, position):
+    def findPosition(self, position):
         
         # check if the position is a string and the length is = 2
         if type(position) == str and len(position) == 2:
@@ -86,16 +92,19 @@ class Board:
                     i += 1
             else:
                 return None
+            
+    def findChessPiece(self, chess_piece, position):
+        positionInBoard = self.findPosition(position)
 
-    def add_piece(self, chess_piece, position):
-        positionInBoard = self.find_position(position)
+    def addChessPiece(self, chess_piece, position):
+        positionInBoard = self.findPosition(position)
         if positionInBoard != None:
             positionInBoard.SetChessPiece(chess_piece)
             return f"{chess_piece} has been added into {position}"
         else:
             return f"{position} is not a valid position"
 
-    def print_board(self):
+    def printBoard(self):
         for row in self.board:
             for position in row:
                 print(position.toPiece(), end=" ")
@@ -103,8 +112,31 @@ class Board:
 
         
 class Game:
-    def __init__(self):
-        self.board = Board()
+    def __init__(self, board):
+        self.board = board
+        self.list_Chess_Pieces = []
+        i = 0
+        while i < 8:
+            n = 0
+            while n < 8:
+                if self.board.board[i][n].chess_piece == None:
+                    pass
+
+                elif isinstance(self.board.board[i][n].chess_piece, IchessPiece):
+
+                    # append the chess piece to the list with the position
+                    self.list_Chess_Pieces.append((self.board.board[i][n].chess_piece, self.board.board[i][n].tostring()))
+
+                n += 1
+
+            i += 1
+
+
+    def BlackMove(self, chess_piece, position):
+        pass
+
+    def WhiteMove(self, chess_piece, position):
+        pass
 
     # def generate_chess_pieces(self):
     #     for col in range(8):

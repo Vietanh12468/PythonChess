@@ -15,13 +15,13 @@ class Board:
             # check if the position is valid
             if p1 in COLUMNS and int(p2) in ROWS:
                 i = 0
-                while i < len(COLUMNS)-1:
+                while i < len(COLUMNS):
                     if self.board[int(p2)-1][i].tostring() == position:
                         return self.board[int(p2)-1][i]
                     i += 1
             elif p2 in COLUMNS and int(p1) in ROWS:
                 i = 0
-                while i < len(COLUMNS)-1:
+                while i < len(COLUMNS):
                     if self.board[int(p1)-1][i].tostring() == position:
                         return self.board[int(p1)-1][i]
                     i += 1

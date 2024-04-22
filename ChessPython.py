@@ -9,13 +9,56 @@ transformer = TransormPostion()
 
 class BlackKing(IKing, Black):
     def __init__(self):
-        super().__init__()
+        IKing.__init__(self)
+        Black.__init__(self)
         self.symbol = "♔ "
 
 class WhiteKing(IKing, White):
     def __init__(self):
         super().__init__()
         self.symbol = "♚ "
+
+class BlackQueen(IQueen, Black):
+    def __init__(self):
+        super().__init__()
+        self.symbol = "♕ "
+
+class WhiteQueen(IQueen, White):
+    def __init__(self):
+        super().__init__()
+        self.symbol = "♛ "
+
+class BlackPawn(IPawn, Black):
+    def __init__(self):
+        super().__init__()
+        self.symbol = "♙ "
+
+class WhitePawn(IPawn, White):
+    def __init__(self):
+        super().__init__()
+        self.symbol = "♟ "
+    def get_available_moves(self, current_position):
+        pass
+    def get_available_moves(self, current_position, board):
+        list_Of_Available_Moves = []
+        current_Column, current_Row = current_position[:2]
+        if int(current_Row) == 2:
+            list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 1)}")
+            list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 2)}")
+        elif board.board[int(current_Row) + 1][ord(current_Column.lower()) - 97].chess_piece == None:
+            list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 1)}")
+            if isinstance(board.board[int(current_Row) + 1][ord(current_Column.lower()) - 97 - 1].chess_piece, Black):
+                list_Of_Available_Moves.append(f"{chr(ord(current_Column.lower()) - 1)}{str(int(current_Row) + 1)}")
+            if isinstance(board.board[int(current_Row) + 1][ord(current_Column.lower()) - 97 + 1].chess_piece, Black):
+                list_Of_Available_Moves.append(f"{chr(ord(current_Column.lower()) + 1)}{str(int(current_Row) + 1)}")
+        return list_Of_Available_Moves
+
+        # else:
+        #     list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 1)}")
+        #     if isinstance(board.board[int(current_Row) + 1][ord(current_Column.lower()) - 97].chess_piece, Black):
+        #         list_Of_Available_Moves.append(f"{chr(ord(current_Column.lower()) - 1)}{str(int(current_Row) + 1)}")
+
+        # return list_Of_Available_Moves
 
 class Game:
     def __init__(self, board):
@@ -49,20 +92,27 @@ class Game:
         return chess_Piece.get_available_moves(current_Postion)
     
     def MoveChessPiece(self, move_Code):
+        if len(move_Code) == 2:
+            col, ro = move_Code[:2]
+            for piece in self.list_Chess_Pieces:
+                if piece[0].short_name == "P" and isinstance(piece[0], White):
+                    if col + ro in piece[0].get_available_moves(piece[1], self.board):
+                        old_Col, old_Row = piece[1][:2]
+                        self.board.board[int(old_Row) - 1][transformer.tranformColumnToNumber(old_Col)].SetChessPiece(None)
+                        self.board.board[int(ro)-1][transformer.tranformColumnToNumber(col)].SetChessPiece(piece[0])
+                        self.list_Chess_Pieces.remove(piece)
         if len(move_Code) == 3:
             pie, col, ro = move_Code[:3]
             for piece in self.list_Chess_Pieces:
-                if piece[0].short_name == pie and isinstance(piece[0], Black):
-                    if col + ro in piece[0].get_available_moves(piece[1]):
+                if piece[0].short_name == pie:
+                    if col + ro in piece[0].get_available_moves(piece[1], self.board):
                         old_Col, old_Row = piece[1][:2]
                         self.board.board[int(old_Row) - 1][transformer.tranformColumnToNumber(old_Col)].SetChessPiece(None)
                         self.board.board[int(ro)-1][transformer.tranformColumnToNumber(col)].SetChessPiece(piece[0])
                         self.list_Chess_Pieces.insert(0, (self.board.board[int(ro)-1][transformer.tranformColumnToNumber(col)].chess_piece, self.board.board[int(ro)-1][transformer.tranformColumnToNumber(col)].tostring()))
                         self.list_Chess_Pieces.remove(piece) 
                         return True
-                    
-
-
+        print("Invalid move")
         return False
     
 

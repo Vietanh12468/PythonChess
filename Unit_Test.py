@@ -23,18 +23,3 @@ new_game = ChessPython.Game(new_board)
 class Test_ShowAvailableMovesPiece(unittest.TestCase):
     def test_ShowAvailableMovesPiece(self):
         self.assertListEqual(sorted(new_game.ShowAvailableMoves(blackKing)), sorted(['b8', 'a7', 'b7']))
-
-
-
-# print the board
-for row in new_board.board:
-    for position in row:
-        print(position.tostring(), end=" ")
-    print(",")
-
-new_board.printBoard()
-
-print(new_game.list_Chess_Pieces)
-
-new_game.MoveChessPiece("kb8")
-new_game.board.printBoard()

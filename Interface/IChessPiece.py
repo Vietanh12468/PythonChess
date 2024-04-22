@@ -9,7 +9,7 @@ class IchessPiece(ABC):
         pass
 
     @abstractmethod
-    def move(self, position):
+    def Move(self):
         pass
 
     def get_available_moves(self):
@@ -22,11 +22,20 @@ class IKing(IchessPiece):
         self.short_name = "K"
         self.posible_Moves_Row_And_Column = [-1, 0, 1]
 
-    def move(self, current_position, new_Position):
-        current_Row, current_Column = current_position[:2]
-        new_Row, new_Column = new_Position[:2]
-        # if int(current_Row) - int(new_Row) in posible_Moves_Row_And_Column and ord(current_Column.lower()) - ord(new_Column.lower()) in posible_Moves_Row_And_Column:
-        #     return []
+    # def Move(self, current_position, new_Position):
+    #     current_Row, current_Column = current_position[:2]
+    #     new_Row, new_Column = new_Position[:2]
+    #     if int(new_Row) in ROWS and new_Column in COLUMNS and not (new_Row == current_Row and new_Column == current_Column):
+    #         if int(current_Row) - int(new_Row) in self.posible_Moves_Row_And_Column and ord(current_Column.lower()) - ord(new_Column.lower()) in self.posible_Moves_Row_And_Column:
+    #             return True
+    #     return False
+    
+    def Move(self, current_position, new_Column, new_Row):
+        current_Column, current_Row = current_position[:2]
+        if int(new_Row) in ROWS and new_Column in COLUMNS and not (new_Row == current_Row and new_Column == current_Column):
+            if int(current_Row) - int(new_Row) in self.posible_Moves_Row_And_Column and ord(current_Column.lower()) - ord(new_Column.lower()) in self.posible_Moves_Row_And_Column:
+                return True
+        return False
 
     def get_available_moves(self, current_position, board):
         list_Of_Available_Moves = []
@@ -44,7 +53,7 @@ class IQueen(IchessPiece):
         self.name = "Queen"
         self.short_name = "Q"
 
-    def move(self, current_position, new_Position):
+    def Move(self, current_position, new_Position):
         pass
 
     def get_available_moves(self, current_position):
@@ -68,8 +77,19 @@ class IPawn(IchessPiece):
         self.name = "Pawn"
         self.short_name = "P"
 
-    def move(self, current_position, new_Position):
+    def Move(self, current_position, new_Position):
         pass
 
-    def get_available_moves(self, current_position):
-        pass
+    def get_available_moves(self, current_position, board):
+        list_Of_Available_Moves = []
+        current_Column, current_Row = current_position[:2]
+        if int(current_Row) == 2:
+            list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 1)}")
+            list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 2)}")
+        elif board.board[int(current_Row) + 1][ord(current_Column.lower()) - 97].chess_piece == None:
+            list_Of_Available_Moves.append(f"{current_Column}{str(int(current_Row) + 1)}")
+        if isinstance(board.board[int(current_Row) - 1 + 1][ord(current_Column.lower()) - 97 - 1].chess_piece, self.opponent_Color):
+            list_Of_Available_Moves.append(f"{chr(ord(current_Column.lower()) - 1)}{str(int(current_Row) + 1)}")
+        if isinstance(board.board[int(current_Row) - 1 + 1][ord(current_Column.lower()) - 97 + 1].chess_piece, self.opponent_Color):
+            list_Of_Available_Moves.append(f"{chr(ord(current_Column.lower()) + 1)}{str(int(current_Row) + 1)}")
+        return list_Of_Available_Moves

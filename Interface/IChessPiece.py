@@ -77,8 +77,21 @@ class IPawn(IchessPiece):
         self.name = "Pawn"
         self.short_name = "P"
 
-    def Move(self, current_position, new_Position):
-        pass
+    def Move(self, current_position, new_Postion_Col, new_Postion_Row, board):
+        old_Col, old_Row = current_position[:2]
+        index_Old_Row = int(old_Row) - 1
+        index_New_Row = int(new_Postion_Row) - 1
+        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
+        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        if int(new_Postion_Row) in ROWS and new_Postion_Col in COLUMNS and not (new_Postion_Row == old_Row and new_Postion_Col == old_Col):
+            if index_New_Col == index_Old_Col:
+                if index_New_Row - index_Old_Row == 1 and board.board[index_New_Row][index_New_Col].chess_piece == None:
+                    return True
+                elif index_Old_Row == 1 and index_New_Row == 3 and board.board[index_New_Row][index_New_Col].chess_piece == None:
+                    return True
+            elif index_New_Row - index_Old_Row == 1 and abs(index_New_Col - index_Old_Col) == 1 and isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color):
+                return True
+        return False
 
     def get_available_moves(self, current_position, board):
         list_Of_Available_Moves = []

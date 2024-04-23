@@ -25,12 +25,9 @@ for row in new_board.board:
 
 new_board.printBoard()
 
-print(new_game.list_Chess_Pieces)
-
 new_game.MoveChessPiece("Kb8")
-# new_game.MoveChessPiece("a4")
+new_game.MoveChessPiece("a4")
 # new_game.MoveChessPiece("Qd1")
 new_game.board.printBoard()
 
-print("Black King can move: ", new_game.ShowAvailableMoves(blackKing))
 print("Info:", new_game.ShowChessPieceInfo("b3"))

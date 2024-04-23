@@ -48,53 +48,66 @@ class Game:
     def __init__(self, board):
         self.board = board
         self.list_Chess_Pieces = []
+        self.list_Chess_Pieces_White = []
+        self.list_Chess_Pieces_Black = []
+        self.numberOfMoves = 0
         i = 0
         while i < 8:
             n = 0
             while n < 8:
-                if self.board.board[i][n].chess_piece == None:
+                this_Chess_Piece = self.board.board[i][n].chess_piece
+                this_Position = self.board.board[i][n].tostring()
+                if this_Chess_Piece == None:
                     pass
-
-                elif isinstance(self.board.board[i][n].chess_piece, IchessPiece):
-                    # append the chess piece to the list with the position
-                    self.list_Chess_Pieces.append((self.board.board[i][n].chess_piece, self.board.board[i][n].tostring()))
+                elif isinstance(this_Chess_Piece, IchessPiece) and isinstance(this_Chess_Piece, White):
+                    self.list_Chess_Pieces.append((this_Chess_Piece, this_Position))
+                    self.list_Chess_Pieces_White.append((this_Chess_Piece, this_Position))
+                elif isinstance(this_Chess_Piece, IchessPiece) and isinstance(this_Chess_Piece, Black):
+                    self.list_Chess_Pieces.append((this_Chess_Piece, this_Position))
+                    self.list_Chess_Pieces_Black.append((this_Chess_Piece, this_Position))
                 n += 1
             i += 1
 
-    # def ChessPieceSwitch(self, pie):
-    #     match pie:
-    #         case "k" :
-    #             return ""
+    def current_Turn(self):
+        if self.numberOfMoves % 2 == 0:
+            return "White"
+        else:
+            return "Black"
 
-    def ShowAvailableMoves(self, chess_Piece):
-        current_Postion = ""
-        for piece in self.list_Chess_Pieces:
-            # check if the chess piece class is the same
-            if type(piece[0]) == type(chess_Piece):
-                current_Postion = piece[1]
-                break
-        return chess_Piece.get_available_moves(current_Postion, self.board)
+    # def ShowAvailableMoves(self, chess_Piece):
+    #     current_Postion = ""
+    #     for piece in self.list_Chess_Pieces:
+    #         if type(piece[0]) == type(chess_Piece):
+    #             current_Postion = piece[1]
+    #             break
+    #     return chess_Piece.get_available_moves(current_Postion, self.board)
     
     def ShowChessPieceInfo(self, Postion):
         for piece in self.list_Chess_Pieces:
             if piece[1] == Postion:
                 return piece[1] + ": " + piece[0].color + " " + piece[0].name + ", available moves: " + str(piece[0].get_available_moves(piece[1], self.board))
     
+    # Fixing and Adding Required
     def MoveChessPiece(self, move_Code):
+        if self.current_Turn() == "White":
+            this_Turn_Chess_Pieces_List = self.list_Chess_Pieces_White
+        else:
+            this_Turn_Chess_Pieces_List = self.list_Chess_Pieces_Black
+
         if len(move_Code) == 2:
             col, ro = move_Code[:2]
-            for piece in self.list_Chess_Pieces:
-                if piece[0].short_name == "P" and isinstance(piece[0], White):
-                    if col + ro in piece[0].get_available_moves(piece[1], self.board):
-                        old_Col, old_Row = piece[1][:2]
-                        self.board.board[int(old_Row) - 1][transformer.tranformColumnToNumber(old_Col)].SetChessPiece(None)
-                        self.board.board[int(ro)-1][transformer.tranformColumnToNumber(col)].SetChessPiece(piece[0])
-                        self.list_Chess_Pieces.remove(piece)
-        if len(move_Code) == 3:
+            piece_Index = 0
+            for piece in this_Turn_Chess_Pieces_List:
+                if isinstance(piece[0], IPawn):
+                    if piece[0].Move(piece[1], col, ro, self.board):
+                        self.UpdateBoardAfterMove(piece[0], piece[1], col, ro, piece_Index)
+                        return True
+                    
+        elif len(move_Code) == 3:
             pie, col, ro = move_Code[:3]
             pie_Type = PieceSwitch().Switch(pie)
             piece_Index = 0
-            for piece in self.list_Chess_Pieces:
+            for piece in this_Turn_Chess_Pieces_List:
                 if isinstance(piece[0], pie_Type):
                     if piece[0].Move(piece[1], col, ro):
                         self.UpdateBoardAfterMove(piece[0], piece[1], col, ro, piece_Index)
@@ -111,8 +124,14 @@ class Game:
         index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
         self.board.board[index_Old_Row][index_Old_Col].SetChessPiece(None)
         self.board.board[index_New_Row][index_New_Col].SetChessPiece(Chess_Piece)
-        self.list_Chess_Pieces.pop(piece_Index) 
-        self.list_Chess_Pieces.insert(0, (self.board.board[index_New_Row][index_New_Col].chess_piece, self.board.board[index_New_Row][index_New_Col].tostring()))
+        if self.current_Turn == "White":
+            self.list_Chess_Pieces_White.pop(piece_Index)
+            self.list_Chess_Pieces_White.insert(0, (Chess_Piece, new_Postion_Col + new_Postion_Row))
+        else:
+            self.list_Chess_Pieces_Black.pop(piece_Index)
+            self.list_Chess_Pieces_Black.insert(0, (Chess_Piece, new_Postion_Col + new_Postion_Row))
+        self.numberOfMoves += 1
+
     
 
 # Create a switch class for checking each piece short name

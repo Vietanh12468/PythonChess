@@ -14,6 +14,7 @@ new_board.addChessPiece(blackQueen, "b7")
 new_board.addChessPiece(whitePawn, "h2")
 new_board.addChessPiece(whitePawn, "a3")
 new_board.addChessPiece(whitePawn, "b3")
+new_board.addChessPiece(whitePawn, "d3")
 new_board.addChessPiece(blackPawn, "c4")
 new_game = ChessPython.Game(new_board)
 
@@ -26,7 +27,7 @@ for row in new_board.board:
 new_board.printBoard()
 
 new_game.MoveChessPiece("Kb8")
-new_game.MoveChessPiece("a4")
+new_game.MoveChessPiece("c4")
 # new_game.MoveChessPiece("Qd1")
 new_game.board.printBoard()
 

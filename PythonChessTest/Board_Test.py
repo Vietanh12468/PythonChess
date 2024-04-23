@@ -22,4 +22,4 @@ new_game = ChessPython.Game(new_board)
 
 class Test_ShowAvailableMovesPiece(unittest.TestCase):
     def test_ShowAvailableMovesPiece(self):
-        self.assertListEqual(sorted(new_game.ShowAvailableMoves(blackKing)), sorted(['b8', 'a7', 'b7']))
+        self.assertListEqual(sorted(new_game.ShowAvailableMoves('a8')), sorted(['b8', 'a7', 'b7']))

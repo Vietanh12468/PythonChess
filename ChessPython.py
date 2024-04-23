@@ -33,21 +33,20 @@ class WhiteQueen(IQueen, White):
 
 class WhitePawn(IPawn, White):
     def __init__(self):
-        IPawn.__init__(self)
         White.__init__(self)
+        IPawn.__init__(self)
         self.symbol = "♟ "
     
 class BlackPawn(IPawn, Black):
     def __init__(self):
-        IPawn.__init__(self)
         Black.__init__(self)
+        IPawn.__init__(self)
         self.symbol = "♙ "
 
 
 class Game:
     def __init__(self, board):
         self.board = board
-        self.list_Chess_Pieces = []
         self.list_Chess_Pieces_White = []
         self.list_Chess_Pieces_Black = []
         self.numberOfMoves = 0
@@ -60,13 +59,14 @@ class Game:
                 if this_Chess_Piece == None:
                     pass
                 elif isinstance(this_Chess_Piece, IchessPiece) and isinstance(this_Chess_Piece, White):
-                    self.list_Chess_Pieces.append((this_Chess_Piece, this_Position))
                     self.list_Chess_Pieces_White.append((this_Chess_Piece, this_Position))
                 elif isinstance(this_Chess_Piece, IchessPiece) and isinstance(this_Chess_Piece, Black):
-                    self.list_Chess_Pieces.append((this_Chess_Piece, this_Position))
                     self.list_Chess_Pieces_Black.append((this_Chess_Piece, this_Position))
                 n += 1
             i += 1
+
+    def all_List_Chess_Pieces(self):
+        return self.list_Chess_Pieces_White + self.list_Chess_Pieces_Black
 
     def current_Turn(self):
         if self.numberOfMoves % 2 == 0:
@@ -74,16 +74,21 @@ class Game:
         else:
             return "Black"
 
-    # def ShowAvailableMoves(self, chess_Piece):
-    #     current_Postion = ""
-    #     for piece in self.list_Chess_Pieces:
-    #         if type(piece[0]) == type(chess_Piece):
-    #             current_Postion = piece[1]
-    #             break
-    #     return chess_Piece.get_available_moves(current_Postion, self.board)
+    def ShowAvailableMoves(self, chess_Piece, color):
+        current_Postion = ""
+        for piece in self.all_List_Chess_Pieces():
+            if type(piece[0]) == type(chess_Piece):
+                current_Postion = piece[1]
+                break
+        return chess_Piece.get_available_moves(current_Postion, self.board)
+    
+    def ShowAvailableMoves(self, Postion):
+        for piece in self.all_List_Chess_Pieces():
+            if piece[1] == Postion:
+                return piece[0].get_available_moves(piece[1], self.board)
     
     def ShowChessPieceInfo(self, Postion):
-        for piece in self.list_Chess_Pieces:
+        for piece in self.all_List_Chess_Pieces():
             if piece[1] == Postion:
                 return piece[1] + ": " + piece[0].color + " " + piece[0].name + ", available moves: " + str(piece[0].get_available_moves(piece[1], self.board))
     
@@ -94,26 +99,82 @@ class Game:
         else:
             this_Turn_Chess_Pieces_List = self.list_Chess_Pieces_Black
 
+        piece_Index = 0
+        move_Piece = None
+        move_Piece_Position = None
+        move_action = None
+        i = 0
+
         if len(move_Code) == 2:
             col, ro = move_Code[:2]
-            piece_Index = 0
             for piece in this_Turn_Chess_Pieces_List:
                 if isinstance(piece[0], IPawn):
                     if piece[0].Move(piece[1], col, ro, self.board):
-                        self.UpdateBoardAfterMove(piece[0], piece[1], col, ro, piece_Index)
-                        return True
+                        if move_Piece == None:
+                            piece_Index = i
+                            move_Piece = piece[0]
+                            move_Piece_Position = piece[1]
+                        elif move_Piece != None:
+                            print ("Invalid move, Unclear what pawn to move")
+                            return False
+                i += 1
+            if move_Piece != None:
+                self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
+                return True
                     
         elif len(move_Code) == 3:
             pie, col, ro = move_Code[:3]
             pie_Type = PieceSwitch().Switch(pie)
-            piece_Index = 0
             for piece in this_Turn_Chess_Pieces_List:
                 if isinstance(piece[0], pie_Type):
-                    if piece[0].Move(piece[1], col, ro):
-                        self.UpdateBoardAfterMove(piece[0], piece[1], col, ro, piece_Index)
-                        return True
-                piece_Index += 1
-        print("Invalid move")
+                    if piece[0].Move(piece[1], col, ro, self.board):
+                        if move_Piece == None:
+                            piece_Index = i
+                            move_Piece = piece[0]
+                            move_Piece_Position = piece[1]
+                        elif move_Piece != None:
+                            print ("Invalid move, Unclear what pawn to move")
+                            return False
+                i += 1
+            if move_Piece != None:
+                self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
+                return True
+            
+        elif len(move_Code) == 4:
+            pie, addition_Info, col, ro = move_Code[:4]
+            pie_Type = PieceSwitch().Switch(pie)
+            if addition_Info == "x":
+                pass
+            elif addition_Info in ROWS:
+                pass
+
+            for piece in this_Turn_Chess_Pieces_List:
+                if isinstance(piece[0], pie_Type):
+                    if addition_Info == "x":
+                        if piece[0].Capture(piece[1], col, ro, self.board):
+                            if move_Piece == None:
+                                piece_Index = i
+                                move_Piece = piece[0]
+                                move_Piece_Position = piece[1]
+                            elif move_Piece != None:
+                                print ("Invalid move, Unclear what " + piece[0].name + " to move")
+                                return False
+                    elif addition_Info in ROWS:
+                        # if piece[0].Move(piece[1], col, ro, self.board, addition_Info):
+                        #     if move_Piece == None:
+                        #         piece_Index = i
+                        #         move_Piece = piece[0]
+                        #         move_Piece_Position = piece[1]
+                        #     elif move_Piece != None:
+                        #         print ("Invalid move, Unclear what pawn to move")
+                        #         return False
+                        pass
+                i += 1
+            if move_Piece != None:
+                self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
+                return True
+
+        print("Invalid move, Cannot move that piece or piece does not exist")
         return False
     
     def UpdateBoardAfterMove(self, Chess_Piece, old_Postion, new_Postion_Col, new_Postion_Row, piece_Index):
@@ -124,7 +185,7 @@ class Game:
         index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
         self.board.board[index_Old_Row][index_Old_Col].SetChessPiece(None)
         self.board.board[index_New_Row][index_New_Col].SetChessPiece(Chess_Piece)
-        if self.current_Turn == "White":
+        if self.current_Turn() == "White":
             self.list_Chess_Pieces_White.pop(piece_Index)
             self.list_Chess_Pieces_White.insert(0, (Chess_Piece, new_Postion_Col + new_Postion_Row))
         else:
@@ -143,14 +204,18 @@ class PieceSwitch:
             case "Q" :
                 return IQueen
             case "R" :
-                # return BlackRook()
+                # return BlackRook
                 pass
             case "B" :
-                # return BlackBishop()
+                # return BlackBishop
                 pass
             case "N" :
-                # return BlackKnight()
+                # return BlackKnight
                 pass
+            # default:
+            #     return None
+            case _:
+                return IPawn
 
 
 

@@ -152,6 +152,9 @@ class IPawn(IchessPiece):
                 if index_New_Row - index_Old_Row == self.forward and abs(index_New_Col - index_Old_Col) == 1 and isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color):
                     return True
         return False
+    
+    def Promote(self, current_position, new_Postion_Col, new_Postion_Row, board):
+        return False
 
 
     def get_available_moves(self, current_position, board): 

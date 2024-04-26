@@ -97,6 +97,7 @@ class IPawn(IchessPiece):
         super().__init__()
         self.name = "Pawn"
         self.short_name = "P"
+        self.valid_Promote = ['Q', 'R', 'B', 'N']
         self.SwitchColor()
 
     def SwitchColor(self):
@@ -127,8 +128,6 @@ class IPawn(IchessPiece):
                         return True
                     elif index_Old_Row == self.begin and index_New_Row == self.maxJump and board.board[index_New_Row][index_New_Col].chess_piece == None:
                         return True
-            # elif index_New_Row - index_Old_Row == self.forward and abs(index_New_Col - index_Old_Col) == 1 and isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color):
-            #     return True
         return False
     # def Capture(self, current_position, new_Postion_Col, new_Postion_Row, board):
     #     old_Col, old_Row = current_position[:2]
@@ -141,21 +140,48 @@ class IPawn(IchessPiece):
     #             if isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color):
     #                 return True
     #     return False  
-    def Capture(self, current_position, new_Postion_Col, new_Postion_Row, board):
+    def Capture(self, current_position, new_Postion_Col, new_Postion_Row, board, piece_Moved_Column):
         old_Col, old_Row = current_position[:2]
         index_Old_Row = int(old_Row) - 1
         index_New_Row = int(new_Postion_Row) - 1
         index_Old_Col = transformer.tranformColumnToNumber(old_Col)
         index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        if index_New_Row == 7 or index_New_Row == 0:
+            return False
         if int(new_Postion_Row) in ROWS and new_Postion_Col in COLUMNS and not (new_Postion_Row == old_Row and new_Postion_Col == old_Col):
-            if index_New_Row -index_Old_Row in self.posible_Moves_Row_And_Column and index_New_Col - index_Old_Col in self.posible_Moves_Row_And_Column:
-                if index_New_Row - index_Old_Row == self.forward and abs(index_New_Col - index_Old_Col) == 1 and isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color):
-                    return True
-        return False
-    
-    def Promote(self, current_position, new_Postion_Col, new_Postion_Row, board):
+            if index_New_Row - index_Old_Row == self.forward and abs(index_New_Col - index_Old_Col) == 1 and isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color) and piece_Moved_Column == old_Col:
+                return True
         return False
 
+    def Promote(self, current_position, new_Postion_Col, new_Postion_Row, board, promote_Piece):
+        old_Col, old_Row = current_position[:2]
+        index_Old_Row = int(old_Row) - 1
+        index_New_Row = int(new_Postion_Row) - 1
+        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
+        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        if index_Old_Row != self.beforePromote or index_New_Row != self.beforePromote + self.forward:
+            return False
+        elif int(new_Postion_Row) in ROWS and new_Postion_Col in COLUMNS and not (new_Postion_Row == old_Row and new_Postion_Col == old_Col):
+            if index_New_Col == index_Old_Col:
+                if index_New_Row - index_Old_Row == self.forward and board.board[index_New_Row][index_New_Col].chess_piece == None:
+                    if promote_Piece in self.valid_Promote:
+                        return True
+        return False
+    
+    def CapturePromote(self, current_position, new_Postion_Col, new_Postion_Row, board, promote_Piece):
+        old_Col, old_Row = current_position[:2]
+        index_Old_Row = int(old_Row) - 1
+        index_New_Row = int(new_Postion_Row) - 1
+        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
+        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        if index_Old_Row != self.beforePromote or index_New_Row != self.beforePromote + self.forward:
+            return False
+        elif int(new_Postion_Row) in ROWS and new_Postion_Col in COLUMNS and not (new_Postion_Row == old_Row and new_Postion_Col == old_Col):
+            if abs(index_New_Col - index_Old_Col) == 1:
+                if index_New_Row - index_Old_Row == self.forward and isinstance(board.board[index_New_Row][index_New_Col].chess_piece, self.opponent_Color):
+                    if promote_Piece in self.valid_Promote:
+                        return True
+        return False
 
     def get_available_moves(self, current_position, board): 
         list_Of_Available_Moves = []

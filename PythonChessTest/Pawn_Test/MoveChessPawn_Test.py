@@ -32,20 +32,35 @@ class Test_MoveChessPawn(unittest.TestCase):
         self.assertIsInstance(new_board.board[3][1].chess_piece, ChessPython.WhitePawn)
         self.assertEqual(new_game.list_Chess_Pieces_White[0][1], "b4")
 
-    def test_MoveChessPiece_WhitePawn_1MoveForward_GetBlock(self):
-        self.assertEqual(new_game.MoveChessPiece("d5"), False)
 
-    def test_MoveChessPiece_WhitePawn_TakeOtherPiece_AllyColor(self):
-        self.assertEqual(new_game.MoveChessPiece("g5"), False)
+    def test_MoveChessPiece_WhitePawn_Fail(self):
+        test_cases = [
+            ("d5", False),
+            ("g5", False),
+            ("d5", False),
+            ("b8", False),
+            ("a4", False)
+        ]
 
-    def test_MoveChessPiece_WhitePawn_TakeOtherPiece_OpponentColor(self):
-        self.assertEqual(new_game.MoveChessPiece("d5"), False)
+        for move_code, expected_result in test_cases:
+            with self.subTest(move_code=move_code, expected_result=expected_result):
+                result = new_game.MoveChessPiece(move_code)
+                self.assertEqual(result, expected_result)
 
-    def test_MoveChessPiece_WhitePawn_1MoveForward_TryToPromote(self):
-        self.assertEqual(new_game.MoveChessPiece("b8"), False)
+    # def test_MoveChessPiece_WhitePawn_1MoveForward_GetBlock(self):
+    #     self.assertEqual(new_game.MoveChessPiece("d5"), False)
 
-    def test_MoveChessPiece_WhitePawn_Jump2Move_inFirstMove_GetBlock(self):
-        self.assertEqual(new_game.MoveChessPiece("a4"), False)
+    # def test_MoveChessPiece_WhitePawn_TakeOtherPiece_AllyColor(self):
+    #     self.assertEqual(new_game.MoveChessPiece("g5"), False)
+
+    # def test_MoveChessPiece_WhitePawn_TakeOtherPiece_OpponentColor(self):
+    #     self.assertEqual(new_game.MoveChessPiece("d5"), False)
+
+    # def test_MoveChessPiece_WhitePawn_1MoveForward_TryToPromote(self):
+    #     self.assertEqual(new_game.MoveChessPiece("b8"), False)
+
+    # def test_MoveChessPiece_WhitePawn_Jump2Move_inFirstMove_GetBlock(self):
+    #     self.assertEqual(new_game.MoveChessPiece("a4"), False)
 
     def test_MoveChessPiece_BlackPawn_Jump2Move_inFirstMove(self):
         new_game.MoveChessPiece("Kh2")
@@ -59,24 +74,40 @@ class Test_MoveChessPawn(unittest.TestCase):
         self.assertIsInstance(new_board.board[4][5].chess_piece, ChessPython.BlackPawn)
         self.assertEqual(new_game.list_Chess_Pieces_Black[0][1], "f5")
 
-    def test_MoveChessPiece_BlackPawn_1MoveForward_TryToPromote(self):
-        new_game.MoveChessPiece("Kh2")
-        self.assertEqual(new_game.MoveChessPiece("f1"), False)
+    def test_MoveChessPiece_BlackPawn_Fail(self):
+        test_cases = [
+            ("f1", False),
+            ("a2", False),
+            ("b6", False),
+            ("d4", False),
+            ("b3", False)
+        ]
 
-    def test_MoveChessPiece_BlackPawn_1MoveForward_GetBlock(self):
         new_game.MoveChessPiece("Kh2")
-        self.assertEqual(new_game.MoveChessPiece("a2"), False)
 
-    def test_MoveChessPiece_BlackPawn_TryToMoveBackward(self):
-        new_game.MoveChessPiece("Kh2")
-        self.assertEqual(new_game.MoveChessPiece("b6"), False)
+        for move_code, expected_result in test_cases:
+            with self.subTest(move_code=move_code, expected_result=expected_result):
+                result = new_game.MoveChessPiece(move_code)
+                self.assertEqual(result, expected_result)
 
-    def test_MoveChessPiece_BlackPawn_TakeOtherPiece(self):
-        new_game.MoveChessPiece("Kh2")
-        self.assertEqual(new_game.MoveChessPiece("d4"), False)
+    # def test_MoveChessPiece_BlackPawn_1MoveForward_TryToPromote(self):
+    #     new_game.MoveChessPiece("Kh2")
+    #     self.assertEqual(new_game.MoveChessPiece("f1"), False)
 
-    def test_MoveChessPiece_BlackPawn_Jump2Move_NotFirstMove(self):
-        new_game.MoveChessPiece("Kh2")
-        self.assertEqual(new_game.MoveChessPiece("b3"), False)
+    # def test_MoveChessPiece_BlackPawn_1MoveForward_GetBlock(self):
+    #     new_game.MoveChessPiece("Kh2")
+    #     self.assertEqual(new_game.MoveChessPiece("a2"), False)
+
+    # def test_MoveChessPiece_BlackPawn_TryToMoveBackward(self):
+    #     new_game.MoveChessPiece("Kh2")
+    #     self.assertEqual(new_game.MoveChessPiece("b6"), False)
+
+    # def test_MoveChessPiece_BlackPawn_TakeOtherPiece(self):
+    #     new_game.MoveChessPiece("Kh2")
+    #     self.assertEqual(new_game.MoveChessPiece("d4"), False)
+
+    # def test_MoveChessPiece_BlackPawn_Jump2Move_NotFirstMove(self):
+    #     new_game.MoveChessPiece("Kh2")
+    #     self.assertEqual(new_game.MoveChessPiece("b3"), False)
 
 # print(new_game.board.printBoard())

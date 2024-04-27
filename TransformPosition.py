@@ -1,6 +1,6 @@
-class TransormPostion:
-    def tranformColumnToNumber(self, column):
+class TransformPostion:
+    def transformColumnToNumber(column):
         return ord(column.lower())-97
 
-    def tranformNumberToColumn(self, number):
-        return str(number + 97)
+    def transformNumberToColumn(number):
+        return chr(number + 97)

@@ -5,8 +5,6 @@ from STATIC_VARIBLE import *
 from Object.Board import *
 from Object.Position import *
 
-transformer = TransormPostion()
-
 class BlackKing(IKing, Black):
     def __init__(self):
         IKing.__init__(self)
@@ -125,6 +123,7 @@ class Game:
                         move_Piece_Position = piece[1]
                         self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
                         return True
+                i += 1
             print("Invalid move, Cannot move that piece or piece does not exist")
             return False
                     
@@ -209,6 +208,7 @@ class Game:
                                 move_Piece_Position = piece[1]
                                 self.UpdateBoardAfterCapture(move_Piece, move_Piece_Position, col, ro, piece_Index)
                                 return True
+                        i += 1
                     print("Invalid move, Cannot move that piece or piece does not exist")
                     return False
                             
@@ -225,15 +225,34 @@ class Game:
                                 move_Piece_Position = piece[1]
                                 self.UpdateBoardAfterPromote(promote_Pie, move_Piece_Position, col, ro, piece_Index)
                                 return True
+                        i += 1
                     print("Invalid move, Cannot move that piece or piece does not exist")
                     return False
                 
                 print("Invalid move code syntax, not an action can perform")
                 return False
+            
+        elif len(move_Code) == 5:
+            pie, addition_Info, action, col, ro = move_Code[0:5]
+            if action != 'x' or not ((isinstance(addition_Info, int) and addition_Info in ROWS) or (addition_Info in COLUMNS)) or not CheckValidColAndRow.Switch(col, ro):
+                print("Invalid move code syntax")
+                return False
+            pie_Type = PieceSwitch().Switch(pie)
+            for piece in this_Turn_Chess_Pieces_List:
+                if isinstance(piece[0], pie_Type) and addition_Info in piece[1]:
+                    if piece[0].Capture(piece[1], col, ro, self.board):
+                        piece_Index = i
+                        move_Piece = piece[0]
+                        move_Piece_Position = piece[1]
+                        self.UpdateBoardAfterCapture(move_Piece, move_Piece_Position, col, ro, piece_Index)
+                        return True
+                    i += 1
+            print("Invalid move, Cannot move that piece or piece does not exist")
+            return False
 
         elif len(move_Code) == 6 and '=' in move_Code:
             current_Col, action1, col, ro, action2, promote_Pie = move_Code
-            if action1 != 'x' or action2 != '=':
+            if action1 != 'x' or action2 != '=' or not CheckValidColAndRow.Switch(col, ro):
                 print("Invalid move code syntax")
                 return False
 
@@ -246,6 +265,8 @@ class Game:
                         self.UpdateBoardAfterCapturePromote(promote_Pie, move_Piece_Position, col, ro, piece_Index)
                         return True
                 i += 1
+            print("Invalid move, Cannot move that piece or piece does not exist")
+            return False
 
         print("Invalid move code syntax, Unknow error")
         return False
@@ -254,8 +275,8 @@ class Game:
         old_Col, old_Row = old_Postion[:2]
         index_Old_Row = int(old_Row) - 1
         index_New_Row = int(new_Postion_Row) - 1
-        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
-        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        index_Old_Col = TransformPostion.transformColumnToNumber(old_Col)
+        index_New_Col = TransformPostion.transformColumnToNumber(new_Postion_Col)
         self.board.board[index_Old_Row][index_Old_Col].SetChessPiece(None)
         self.board.board[index_New_Row][index_New_Col].SetChessPiece(Chess_Piece)
         if self.current_Turn() == "White":
@@ -270,18 +291,17 @@ class Game:
         old_Col, old_Row = old_Postion[:2]
         index_Old_Row = int(old_Row) - 1
         index_New_Row = int(new_Postion_Row) - 1
-        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
-        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        index_Old_Col = TransformPostion.transformColumnToNumber(old_Col)
+        index_New_Col = TransformPostion.transformColumnToNumber(new_Postion_Col)
         self.board.board[index_Old_Row][index_Old_Col].SetChessPiece(None)
+        self.board.board[index_New_Row][index_New_Col].SetChessPiece(Chess_Piece)
         if self.current_Turn() == "White":
-            self.board.board[index_New_Row][index_New_Col].SetChessPiece(Chess_Piece)
             self.list_Chess_Pieces_White.pop(piece_Index)
             self.list_Chess_Pieces_White.insert(0, (Chess_Piece, new_Postion_Col + new_Postion_Row))
             for piece in self.list_Chess_Pieces_Black:
                 if piece[1] == new_Postion_Col + new_Postion_Row:
                     self.list_Chess_Pieces_Black.remove(piece)
         else:
-            self.board.board[index_New_Row][index_New_Col].SetChessPiece(Chess_Piece)
             self.list_Chess_Pieces_Black.pop(piece_Index)
             self.list_Chess_Pieces_Black.insert(0, (Chess_Piece, new_Postion_Col + new_Postion_Row))
             for piece in self.list_Chess_Pieces_White:
@@ -293,8 +313,8 @@ class Game:
         old_Col, old_Row = old_Postion[:2]
         index_Old_Row = int(old_Row) - 1
         index_New_Row = int(new_Postion_Row) - 1
-        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
-        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        index_Old_Col = TransformPostion.transformColumnToNumber(old_Col)
+        index_New_Col = TransformPostion.transformColumnToNumber(new_Postion_Col)
         self.board.board[index_Old_Row][index_Old_Col].SetChessPiece(None)
         if self.current_Turn() == "White":
             piece_Promote = PieceSwitchWhite().Switch(piece_Promote_Short)
@@ -312,8 +332,8 @@ class Game:
         old_Col, old_Row = old_Postion[:2]
         index_Old_Row = int(old_Row) - 1
         index_New_Row = int(new_Postion_Row) - 1
-        index_Old_Col = transformer.tranformColumnToNumber(old_Col)
-        index_New_Col = transformer.tranformColumnToNumber(new_Postion_Col)
+        index_Old_Col = TransformPostion.transformColumnToNumber(old_Col)
+        index_New_Col = TransformPostion.transformColumnToNumber(new_Postion_Col)
         self.board.board[index_Old_Row][index_Old_Col].SetChessPiece(None)
         if self.current_Turn() == "White":
             piece_Promote = PieceSwitchWhite().Switch(piece_Promote_Short)

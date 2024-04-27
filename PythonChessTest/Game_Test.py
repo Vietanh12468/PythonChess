@@ -10,7 +10,7 @@ new_board.addChessPiece(ChessPython.BlackPawn(), "b5")
 new_board.addChessPiece(ChessPython.BlackPawn(), "b4")
 new_game = ChessPython.Game(new_board)
 
-class Test_MoveChessKing(unittest.TestCase):
+class Test_MoveChessGeneral(unittest.TestCase):
     def test_InvalidMove_3Chars(self):
         test_variable ={
             ("K2a", False),

@@ -1,46 +1,13 @@
-from Interface.IChessPiece import *
-from Interface.Color import *
-from TransformPosition import *
-from STATIC_VARIBLE import *
-from Object.Board import *
-from Object.Position import *
-
-class BlackKing(IKing, Black):
-    def __init__(self):
-        IKing.__init__(self)
-        Black.__init__(self)
-        self.symbol = "♔ "
-
-class WhiteKing(IKing, White):
-    def __init__(self):
-        IKing.__init__(self)
-        White.__init__(self)
-        self.symbol = "♚ "
-
-class BlackQueen(IQueen, Black):
-    def __init__(self):
-        IQueen.__init__(self)
-        Black.__init__(self)
-        self.symbol = "♕ "
-
-class WhiteQueen(IQueen, White):
-    def __init__(self):
-        IQueen.__init__(self)
-        White.__init__(self)
-        self.symbol = "♛ "
-
-class WhitePawn(IPawn, White):
-    def __init__(self):
-        White.__init__(self)
-        IPawn.__init__(self)
-        self.symbol = "♟ "
-    
-class BlackPawn(IPawn, Black):
-    def __init__(self):
-        Black.__init__(self)
-        IPawn.__init__(self)
-        self.symbol = "♙ "
-
+# from Interface.IChessPiece import *
+# from Interface.Color import *
+# from TransformPosition import *
+# from STATIC_VARIBLE import *
+# from Object.Board import *
+# from Object.Position import *
+# from Object.King import *
+from Interface import *
+from Object import *
+from GlobalClass import *
 
 class Game:
     def __init__(self, board):
@@ -71,14 +38,6 @@ class Game:
             return "White"
         else:
             return "Black"
-
-    def ShowAvailableMoves(self, chess_Piece, color):
-        current_Postion = ""
-        for piece in self.all_List_Chess_Pieces():
-            if type(piece[0]) == type(chess_Piece):
-                current_Postion = piece[1]
-                break
-        return chess_Piece.get_available_moves(current_Postion, self.board)
     
     def ShowAvailableMoves(self, Postion):
         for piece in self.all_List_Chess_Pieces():
@@ -365,7 +324,6 @@ class CheckValidColAndRow:
 
         
     
-# Create a switch class for checking each piece short name
 class PieceSwitch:
     def Switch(self, pie):
         match pie:
@@ -387,7 +345,6 @@ class PieceSwitch:
             case _:
                 return IPawn
             
-
 
 class PieceSwitchWhite(PieceSwitch):
     def Switch(self, pie):
@@ -426,35 +383,5 @@ class PieceSwitchBlack(PieceSwitch):
                 pass
             case _:
                 return BlackPawn()
-
-
-
-    # def get_available_moves(self, current_position):
-    #     list_Of_Available_Moves = []
-    #     current_Column, current_Row = current_position[:2]
-    #     for row in self.posible_Moves_Row_And_Column:
-    #         for column in self.posible_Moves_Row_And_Column:
-    #             if int(current_Row) + row in ROWS and chr(ord(current_Column.lower()) + column) in COLUMNS and not (row == 0 and column == 0):
-    #                 list_Of_Available_Moves.append(f"{chr(ord(current_Column.lower()) + column)}{str(int(current_Row) + row)}")
-    #     return list_Of_Available_Moves
-
-
-    # def BlackMove(self, move_Code):
-    #     piece_Move = ""
-    #     current_Postion = ""
-    #     if move_Code.len() == 3:
-    #         pie, col, ro = move_Code[:3]
-    #         for piece in self.list_Chess_Pieces:
-    #             # check if the chess piece class is the same
-    #             if piece[0].short_name == pie and isinstance(piece[0], Black):
-    #                 piece_Move = piece[0]
-    #                 current_Postion = piece[1]
-    #             ava
-
-    def WhiteMove(self, chess_piece, position):
-        pass
-
-    # def generate_chess_pieces(self):
-    #     for col in range(8):
 
 

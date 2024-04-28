@@ -1,5 +1,5 @@
 from Object.Position import *
-from STATIC_VARIBLE import *
+from GlobalClass import *
 
 class Board:
     def __init__(self):

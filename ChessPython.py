@@ -321,9 +321,7 @@ class CheckValidColAndRow:
                 return False
         except ValueError:
             return False
-
-        
-    
+  
 class PieceSwitch:
     def Switch(self, pie):
         match pie:
@@ -332,20 +330,14 @@ class PieceSwitch:
             case "Q" :
                 return IQueen
             case "R" :
-                # return BlackRook
-                pass
+                return IRook
             case "B" :
-                # return BlackBishop
-                pass
+                return IBishop
             case "N" :
-                # return BlackKnight
-                pass
-            # default:
-            #     return None
+                return IKnight
             case _:
                 return IPawn
             
-
 class PieceSwitchWhite(PieceSwitch):
     def Switch(self, pie):
         match pie:
@@ -354,14 +346,11 @@ class PieceSwitchWhite(PieceSwitch):
             case "Q" :
                 return WhiteQueen()
             case "R" :
-                # return BlackRook
-                pass
+                return WhiteRook()
             case "B" :
-                # return BlackBishop
-                pass
+                return WhiteBishop()
             case "N" :
-                # return BlackKnight
-                pass
+                return WhiteKnight()
             case _:
                 return WhitePawn()
             
@@ -373,15 +362,10 @@ class PieceSwitchBlack(PieceSwitch):
             case "Q" :
                 return BlackQueen()
             case "R" :
-                # return BlackRook
-                pass
+                return BlackRook()
             case "B" :
-                # return BlackBishop
-                pass
+                return BlackBishop()
             case "N" :
-                # return BlackKnight
-                pass
+                return BlackKnight()
             case _:
                 return BlackPawn()
-
-

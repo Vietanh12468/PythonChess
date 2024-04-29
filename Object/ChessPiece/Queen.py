@@ -1,5 +1,6 @@
 from Interface import *
 from GlobalClass import *
+from Object.Move import *
 
 class IQueen(IchessPiece):
     def __init__(self):
@@ -7,40 +8,18 @@ class IQueen(IchessPiece):
         self.name = "Queen"
         self.short_name = "Q"
 
-    def Move(self, current_position, new_Postion_Col, new_Postion_Row, board):
-        old_Col, old_Row = current_position[:2]
-        index_Old_Row = int(old_Row) - 1
-        index_New_Row = int(new_Postion_Row) - 1
-        index_Old_Col = TransformPostion.transformColumnToNumber(old_Col)
-        index_New_Col = TransformPostion.transformColumnToNumber(new_Postion_Col)
-        if (new_Postion_Row == old_Row and new_Postion_Col == old_Col) or not (index_New_Row == index_Old_Row or index_New_Col == index_Old_Col or abs(index_New_Row - index_Old_Row) == abs(index_New_Col - index_Old_Col)):
-            return False
-        col_Direction = VectorDirection.GetDirection(index_Old_Col, index_New_Col)
-        row_Direction = VectorDirection.GetDirection(index_Old_Row, index_New_Row)
-        if index_New_Row == index_Old_Row or index_New_Col == index_Old_Col or abs(index_New_Row - index_Old_Row) == abs(index_New_Col - index_Old_Col):
-            for i in range(1, max(abs(index_New_Col - index_Old_Col), abs(index_New_Row - index_Old_Row)) + 1):
-                if board.board[index_Old_Row + i * row_Direction][index_Old_Col + i * col_Direction].chess_piece != None:
-                    return False
+    def ConditionBeforeCapture(self, index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+        if index_Old_Row == index_New_Row or index_Old_Col == index_New_Col or abs(index_Old_Row - index_New_Row) == abs(index_Old_Col - index_New_Col):
             return True
         return False
-    
-    def Capture(self, current_position, new_Postion_Col, new_Postion_Row, board):       
-        old_Col, old_Row = current_position[:2]
-        index_Old_Row = int(old_Row) - 1
-        index_New_Row = int(new_Postion_Row) - 1
-        index_Old_Col = TransformPostion.transformColumnToNumber(old_Col)
-        index_New_Col = TransformPostion.transformColumnToNumber(new_Postion_Col)
-        if (new_Postion_Row == old_Row and new_Postion_Col == old_Col) or not (index_New_Row == index_Old_Row or index_New_Col == index_Old_Col or abs(index_New_Row - index_Old_Row) == abs(index_New_Col - index_Old_Col)):
-            return False
-        col_Direction = VectorDirection.GetDirection(index_Old_Col, index_New_Col)
-        row_Direction = VectorDirection.GetDirection(index_Old_Row, index_New_Row)
-        if index_New_Row == index_Old_Row or index_New_Col == index_Old_Col or abs(index_New_Row - index_Old_Row) == abs(index_New_Col - index_Old_Col):
-            vectorRange = max(abs(index_New_Col - index_Old_Col), abs(index_New_Row - index_Old_Row))
-            for i in range(1, vectorRange + 1):
-                if isinstance(board.board[index_Old_Row + i * row_Direction][index_Old_Col + i * col_Direction].chess_piece, self.opponent_Color) and i == vectorRange:
-                    return True
-                elif board.board[index_Old_Row + i * row_Direction][index_Old_Col + i * col_Direction].chess_piece != None:
-                    return False
+
+    def ConditionToMove(self, index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+        if Move.DiagonalMove(index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+            return True
+        elif Move.ColumnMove(index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+            return True
+        elif Move.RowMove(index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+            return True
         return False
 
     def get_available_moves(self, current_position, board):

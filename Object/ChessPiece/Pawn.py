@@ -20,8 +20,10 @@ class IPawn(IchessPiece):
             self.begin = 6
             self.maxJump = 4
             self.beforePromote = 1
-
-
+            
+    def ConditionToMove(index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+        return super().ConditionToMove(index_Old_Col, index_New_Row, index_New_Col, board)
+    
     def Move(self, current_position, new_Postion_Col, new_Postion_Row, board):
         old_Col, old_Row = current_position[:2]
         index_Old_Row = int(old_Row) - 1

@@ -27,3 +27,15 @@ class Move:
                     return False
             return True
         return False
+    
+    def KnightMove(index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+        if [abs(index_Old_Col - index_New_Col), abs(index_Old_Row - index_New_Row)] in [[1, 2], [2, 1]]:
+            if board.board[index_New_Row][index_New_Col].chess_piece is None:
+                return True
+        return False
+    
+    def KnightCapture(index_Old_Row, index_Old_Col, index_New_Row, index_New_Col, board):
+        if [abs(index_Old_Col - index_New_Col), abs(index_Old_Row - index_New_Row)] in [[1, 2], [2, 1]]:
+            if isinstance(board.board[index_New_Row][index_New_Col].chess_piece, board.board[index_Old_Row][index_Old_Col].chess_piece.opponent_Color):
+                return True
+        return False

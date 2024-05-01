@@ -193,7 +193,7 @@ class Game:
             
         elif len(move_Code) == 5:
             pie, addition_Info, action, col, ro = move_Code[0:5]
-            if action != 'x' or not ((isinstance(addition_Info, int) and addition_Info in ROWS) or (addition_Info in COLUMNS)) or not CheckValidColAndRow.Switch(col, ro):
+            if action != 'x' or not (addition_Info in [str(num) for num in ROWS] or (addition_Info in COLUMNS)) or not CheckValidColAndRow.Switch(col, ro):
                 print("Invalid move code syntax")
                 return False
             pie_Type = PieceSwitch().Switch(pie)

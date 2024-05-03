@@ -1,5 +1,6 @@
 from PythonChessTest.Board_Test import *
 from PythonChessTest.Game_Test import *
+from PythonChessTest.HistoryMove_Test import *
 
 from PythonChessTest.King_Test.ShowAvailableMovesKing_Test import *
 from PythonChessTest.King_Test.MoveChessKing_Test import *

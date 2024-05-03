@@ -15,6 +15,7 @@ class Game:
         self.list_Chess_Pieces_White = []
         self.list_Chess_Pieces_Black = []
         self.numberOfMoves = 0
+        self.historyMoves = HistoryMoves()
         i = 0
         while i < 8:
             n = 0
@@ -80,6 +81,7 @@ class Game:
                         piece_Index = i
                         move_Piece = piece[0]
                         move_Piece_Position = piece[1]
+                        self.UpdateMoveHistory(move_Code, move_Piece_Position)
                         self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
                         return True
                 i += 1
@@ -104,6 +106,7 @@ class Game:
                             return False
                 i += 1
             if move_Piece != None:
+                self.UpdateMoveHistory(move_Code, move_Piece_Position)
                 self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
                 return True
             else:
@@ -134,6 +137,10 @@ class Game:
                                     print ("Invalid move, Unclear what " + piece[0].name + " to move")
                                     return False
                         i += 1
+                    if move_Piece != None:
+                        self.UpdateMoveHistory(move_Code, move_Piece_Position)
+                        self.UpdateBoardAfterCapture(move_Piece, move_Piece_Position, col, ro, piece_Index)
+                        return True
                 elif addition_Info in ROWS:
                     for piece in this_Turn_Chess_Pieces_List:
                         if isinstance(piece[0], pie_Type):
@@ -146,9 +153,10 @@ class Game:
                                     print ("Invalid move, Unclear what " + piece[0].name + " to move")
                                     return False
                         i += 1
-                if move_Piece != None:
-                    self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
-                    return True
+                    if move_Piece != None:
+                        self.UpdateMoveHistory(move_Code, move_Piece_Position)
+                        self.UpdateBoardAfterMove(move_Piece, move_Piece_Position, col, ro, piece_Index)
+                        return True
                 else:
                     print("Invalid move, Cannot move that piece or piece does not exist")
                     return False
@@ -165,6 +173,7 @@ class Game:
                                 piece_Index = i
                                 move_Piece = piece[0]
                                 move_Piece_Position = piece[1]
+                                self.UpdateMoveHistory(move_Code, move_Piece_Position)
                                 self.UpdateBoardAfterCapture(move_Piece, move_Piece_Position, col, ro, piece_Index)
                                 return True
                         i += 1
@@ -182,6 +191,7 @@ class Game:
                                 piece_Index = i
                                 move_Piece = piece[0]
                                 move_Piece_Position = piece[1]
+                                self.UpdateMoveHistory(move_Code, move_Piece_Position)
                                 self.UpdateBoardAfterPromote(promote_Pie, move_Piece_Position, col, ro, piece_Index)
                                 return True
                         i += 1
@@ -203,6 +213,7 @@ class Game:
                         piece_Index = i
                         move_Piece = piece[0]
                         move_Piece_Position = piece[1]
+                        self.UpdateMoveHistory(move_Code, move_Piece_Position)
                         self.UpdateBoardAfterCapture(move_Piece, move_Piece_Position, col, ro, piece_Index)
                         return True
                     i += 1
@@ -221,6 +232,7 @@ class Game:
                         piece_Index = i
                         move_Piece = piece[0]
                         move_Piece_Position = piece[1]
+                        self.UpdateMoveHistory(move_Code, move_Piece_Position)
                         self.UpdateBoardAfterCapturePromote(promote_Pie, move_Piece_Position, col, ro, piece_Index)
                         return True
                 i += 1
@@ -311,6 +323,43 @@ class Game:
                 if piece[1] == new_Postion_Col + new_Postion_Row:
                     self.list_Chess_Pieces_White.remove(piece)
         self.numberOfMoves += 1
+
+    def UpdateBoardAfterUndo(self, newMove, previousPosition, previousChessPiece, previousMoveNumber):
+        if previousChessPiece is None:
+            updateOldChessList = False
+        else:
+            updateOldChessList = True
+        if previousMoveNumber % 2 == 0:
+            chessPieceUndo = PieceSwitchBlack().Switch(newMove[0])
+            if updateOldChessList:
+                self.list_Chess_Pieces_White.insert(0, (previousChessPiece, newMove[-2] + newMove[-1]))
+                for piece in self.list_Chess_Pieces_Black:
+                    if piece[1] == newMove[-2] + newMove[-1]:
+                        self.list_Chess_Pieces_Black.remove(piece)
+                self.list_Chess_Pieces_Black.insert(0, (chessPieceUndo, previousPosition))
+        elif previousMoveNumber % 2 == 1:
+            chessPieceUndo = PieceSwitchWhite().Switch(newMove[0])
+            if updateOldChessList:
+                self.list_Chess_Pieces_Black.insert(0, (previousChessPiece, newMove[-2] + newMove[-1]))
+                for piece in self.list_Chess_Pieces_White:
+                    if piece[1] == newMove[-2] + newMove[-1]:
+                        self.list_Chess_Pieces_White.remove(piece)
+                self.list_Chess_Pieces_White.insert(0, (chessPieceUndo, previousPosition))
+        self.board.board[int(newMove[-1]) - 1][TransformPostion.transformColumnToNumber(newMove[-2])].SetChessPiece(previousChessPiece)
+        self.board.board[int(previousPosition[-1]) - 1][TransformPostion.transformColumnToNumber(previousPosition[-2])].SetChessPiece(chessPieceUndo)
+
+    # previousChessPiece is the chess piece that was at the new position at the previousPosition is the position of the current chess piece move
+    # for example if Qxe4, previousChessPiece is the piece that was capture by Q and previousPosition is the previous position of Q
+    # More detail example, previousChessPiece = white pawn, previousPosition is the Q posion = 'e7', and Qxe4 will succesfully capture and move to 'e4'
+    def UpdateMoveHistory(self, newMove, previousPosition):
+        previousChessPiece = self.board.board[int(newMove[-1]) - 1][TransformPostion.transformColumnToNumber(newMove[-2])].chess_piece
+        self.historyMoves.Add(newMove, previousPosition, previousChessPiece)
+
+    def UndoMove(self):
+        previousMoveInfo, previousMoveNumber = self.historyMoves.PreviousMoveInfo()
+        self.UpdateBoardAfterUndo(previousMoveInfo[0], previousMoveInfo[1], previousMoveInfo[2], previousMoveNumber)
+
+
 
 class CheckValidColAndRow:
     def Switch(col, row):
